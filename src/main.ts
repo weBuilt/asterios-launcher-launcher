@@ -3,13 +3,9 @@ import * as path from "path";
 // import os from "os";
 import fs from "fs";
 
-// create a function which returns true or false to recognize a development environment
-const isDev = () => process.env.NODE_ENV === 'development';
-// use that function to either use the development path OR the production prefix to your file location
-const directory = isDev() ? process.cwd().concat('/resources/app') : __dirname;
+const isDev = !(process.env.NODE_ENV === undefined) && (process.env.NODE_ENV.indexOf("dev") !== -1)
 
-const configPath = path.resolve(directory, "..", "config.json");
-console.log(configPath)
+const configPath = path.resolve(__dirname, "..", "config.json");
 let config = {
     asteriosPath: undefined as string,
 };
@@ -18,7 +14,6 @@ if (configString) {
     config = JSON.parse(
         configString.toString()
     )
-    console.log(JSON.stringify(config))
 } else {
     console.log("no config file found");
 }
@@ -26,7 +21,6 @@ if (configString) {
 
 let mainWindowId: number;
 let asteriosPath: string;
-console.log(config.asteriosPath)
 if (config.asteriosPath) asteriosPath = config.asteriosPath as string;
 
 function createWindow() {
@@ -45,7 +39,7 @@ function createWindow() {
     mainWindow.loadFile(path.join(__dirname, "../index.html"));
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools();
+    if (isDev) mainWindow.webContents.openDevTools();
 }
 
 // This method will be called when Electron has finished
