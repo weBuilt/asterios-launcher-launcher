@@ -6,8 +6,9 @@
     "build": "tsc",
     "watch": "tsc -w",
     "lint": "tslint -c tslint.json -p tsconfig.json",
-    "start": "npm run build && electron ./dist/src/main.js"
+    "start": "npm run build && electron ./dist/main.js"
   },
+  "main": "./dist/main.js",
   "repository": "https://github.com/weBuilt/asterios-launcher-launcher",
   "keywords": [
     "Electron",

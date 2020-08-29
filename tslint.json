@@ -11,7 +11,8 @@
     "no-bitwise": true,
     "no-conditional-assignment": true,
     "no-consecutive-blank-lines": false,
-    "no-var-requires": false
+    "no-var-requires": false,
+    "no-console": false
   },
   "jsRules": {
     "max-line-length": {
