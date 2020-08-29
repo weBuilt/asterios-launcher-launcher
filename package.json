@@ -1,24 +1,21 @@
 {
-  "name": "electron-quick-start-typescript",
-  "version": "1.0.0",
-  "description": "A minimal Electron application written with Typescript",
+  "name": "asterios-launcher-launcher",
+  "version": "0.0.1",
+  "description": "Simple autologin management tool for asterios",
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
     "lint": "tslint -c tslint.json -p tsconfig.json",
-    "start": "npm run build && electron ./dist/main.js"
+    "start": "npm run build && electron ./dist/src/main.js"
   },
-  "repository": "https://github.com/electron/electron-quick-start-typescript",
+  "repository": "https://github.com/weBuilt/asterios-launcher-launcher",
   "keywords": [
     "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo",
+    "Asterios",
     "typescript"
   ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
+  "author": "weBuilt",
+  "license": "MIT",
   "devDependencies": {
     "electron": "^9.0.4",
     "tslint": "^6.1.2",
