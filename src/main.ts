@@ -68,11 +68,11 @@ app.on("window-all-closed", () => {
 // code. You can also put them in separate files and require them here.
 ipcMain.on('open-file-dialog', (event) => {
     const select = dialog.showOpenDialog({
-        properties: ['openDirectory'],
+        properties: ['openDirectory', "dontAddToRecent"],
         title: "Select Aterios root folder",
     })
     select.then((files) => {
-        if (files) {
+        if (files && isAsteriosPathCorrect(files.filePaths[0])) {
             asteriosPath = files.filePaths[0];
             saveConfig();
             event.sender.send('selected-directory', files.filePaths[0]);
@@ -89,8 +89,13 @@ ipcMain.on('synchronous-message', (event, args) => {
     }
 })
 
+function isAsteriosPathCorrect(astPath: string): boolean {
+    const stat = fs.statSync(astPath)
+    return stat.isDirectory() && fs.existsSync(path.resolve(astPath, "asterios"))
+}
+
 function checkAsteriosPath(event: IpcMainEvent) {
-    if (asteriosPath) {
+    if (asteriosPath && isAsteriosPathCorrect(asteriosPath)) {
         event.returnValue = ["asterios-path-specified", asteriosPath];
     } else
         event.returnValue = ["asterios-path-not-specified"]
