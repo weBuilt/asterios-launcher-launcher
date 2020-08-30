@@ -1,0 +1,12 @@
+[
+  {
+    "name": "test1",
+    "description": "test 1 description",
+    "filename": "test1.ini"
+  },
+  {
+    "name": "test2",
+    "description": "test 2 description",
+    "filename": "test2.ini"
+  }
+]

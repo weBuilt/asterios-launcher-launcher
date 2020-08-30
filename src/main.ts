@@ -1,4 +1,5 @@
-import {app, BrowserWindow, ipcMain, dialog, IpcMainEvent/*, shell*/} from "electron";
+import {app, BrowserWindow, ipcMain, dialog, IpcMainEvent} from "electron";
+const child = require('child_process');
 import * as path from "path";
 // import os from "os";
 import fs from "fs";
@@ -9,6 +10,34 @@ const configPath = path.resolve(__dirname, "..", "config.json");
 let config = {
     asteriosPath: undefined as string,
 };
+
+class SavedLogin {
+    name: string
+    description: string
+    filename: string
+
+    constructor(
+        name: string,
+        description: string,
+        filename: string,
+    ) {
+        this.name = name
+        this.description = description
+        this.filename = filename
+    }
+}
+
+const savedLoginsPath = path.resolve(__dirname, "..", "testLogins.json");
+const savedLoginsString = fs.readFileSync(savedLoginsPath, {encoding: "UTF-8"})
+let savedLogins: SavedLogin[] = [];
+if (savedLoginsString) {
+    const parsed = JSON.parse(savedLoginsString);
+    if (parsed instanceof Array) savedLogins = parsed.map(
+        (value, _, __) => {
+            return new SavedLogin(value.name, value.description, value.filename)
+        }
+    )
+}
 const configString: string = fs.readFileSync(configPath, {encoding: "UTF-8"})
 if (configString) {
     config = JSON.parse(
@@ -106,4 +135,14 @@ function saveConfig() {
     fs.writeFile(configPath, JSON.stringify(config), () => {
         return;
     });
+}
+const targetIniName = path.resolve(asteriosPath, "asterios", "AsteriosGame.ini")
+const launcherPath = path.resolve(asteriosPath, "Asterios.exe")
+function useSavedLogin(savedLogin: SavedLogin) {
+    fs.copyFileSync(resolveLoginPath(savedLogin.filename), targetIniName)
+    console.log("used", savedLogin.name)
+    child.execFile(launcherPath, ["/autoplay"])
+}
+function resolveLoginPath(loginFilename: string): string {
+    return path.resolve(asteriosPath, "asterios", "logins", loginFilename);
 }
