@@ -1,20 +1,30 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
-    <meta charset="UTF-8" />
+<head>
+    <meta charset="UTF-8"/>
     <title>Hello World!</title>
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
+            http-equiv="Content-Security-Policy"
+            content="default-src 'self'; script-src 'self'"
     />
-  </head>
-  <body>
+</head>
+<body>
 
-    Asterios folder is <span id="asterios-path">not specified</span>.
-    <button id="select-asterios-path">Specify path</button>
+Asterios folder is <span id="asterios-path">not specified</span>.
+<button id="select-asterios-path">Specify path</button>
+<table id="logins-table">
+    <thead>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Filename</th>
+    </thead>
+    <tbody id="logins-table-body">
 
-    <!-- You can also require other files to run in this process -->
-    <script src="./dist/index.js"></script>
-  </body>
+    </tbody>
+</table>
+
+<!-- You can also require other files to run in this process -->
+<script src="./dist/index.js"></script>
+</body>
 </html>

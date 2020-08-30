@@ -1,4 +1,5 @@
 import {app, BrowserWindow, ipcMain, dialog, IpcMainEvent} from "electron";
+
 const child = require('child_process');
 import * as path from "path";
 // import os from "os";
@@ -115,6 +116,23 @@ ipcMain.on('synchronous-message', (event, args) => {
     switch (command) {
         case "asterios-path-specified":
             checkAsteriosPath(event)
+            break;
+        case "get-logins":
+            returnLogins(event)
+            break;
+    }
+})
+ipcMain.on("asynchronous-message", (event, args) => {
+    let command = args.toString()
+    if (args instanceof Array) command = args[0];
+    console.log("async command", command)
+    switch (command) {
+        case "launch":
+            const loginToUse = savedLogins.find((v, _, __) => {
+                return v.name === args[1]
+            })
+            useSavedLogin(loginToUse)
+            break;
     }
 })
 
@@ -132,17 +150,32 @@ function checkAsteriosPath(event: IpcMainEvent) {
 
 function saveConfig() {
     config.asteriosPath = asteriosPath;
-    fs.writeFile(configPath, JSON.stringify(config), () => {
-        return;
-    });
+    fs.writeFileSync(configPath, JSON.stringify(config));
 }
+
 const targetIniName = path.resolve(asteriosPath, "asterios", "AsteriosGame.ini")
 const launcherPath = path.resolve(asteriosPath, "Asterios.exe")
+
 function useSavedLogin(savedLogin: SavedLogin) {
-    fs.copyFileSync(resolveLoginPath(savedLogin.filename), targetIniName)
+    if (savedLogin) fs.copyFileSync(resolveLoginPath(savedLogin.filename), targetIniName)
     console.log("used", savedLogin.name)
     child.execFile(launcherPath, ["/autoplay"])
 }
+
+function saveNewLogin(name: string, description: string) {
+    const newLogin = new SavedLogin(name, description, name + ".ini")
+    fs.copyFileSync(targetIniName, resolveLoginPath(newLogin.filename))
+    console.log("saved", newLogin)
+    savedLogins.push(newLogin)
+    fs.writeFileSync(savedLoginsPath, JSON.stringify(savedLogins))
+}
+
 function resolveLoginPath(loginFilename: string): string {
     return path.resolve(asteriosPath, "asterios", "logins", loginFilename);
+}
+
+function returnLogins(event: IpcMainEvent) {
+    if (savedLogins.length === 0)
+        event.returnValue = ["none"]
+    else event.returnValue = ["logins", JSON.stringify(savedLogins)]
 }
