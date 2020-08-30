@@ -5,6 +5,8 @@ import * as path from "path";
 // import os from "os";
 import fs from "fs";
 
+const {v4: uuidv4} = require('uuid');
+
 const isDev = !(process.env.NODE_ENV === undefined) && (process.env.NODE_ENV.indexOf("dev") !== -1)
 
 const configPath = path.resolve(__dirname, "..", "config.json");
@@ -13,33 +15,38 @@ let config = {
 };
 
 class SavedLogin {
+    id: string
     name: string
     description: string
     filename: string
 
     constructor(
+        id: string,
         name: string,
         description: string,
         filename: string,
     ) {
+        this.id = id
         this.name = name
         this.description = description
         this.filename = filename
     }
 }
 
-const savedLoginsPath = path.resolve(__dirname, "..", "testLogins.json");
-const savedLoginsString = fs.readFileSync(savedLoginsPath, {encoding: "UTF-8"})
+const savedLoginsPath = path.resolve(__dirname, "..", "logins.json");
+const savedLoginsString =
+    fs.existsSync(savedLoginsPath) ? fs.readFileSync(savedLoginsPath, {encoding: "UTF-8"}) : undefined
 let savedLogins: SavedLogin[] = [];
 if (savedLoginsString) {
     const parsed = JSON.parse(savedLoginsString);
     if (parsed instanceof Array) savedLogins = parsed.map(
         (value, _, __) => {
-            return new SavedLogin(value.name, value.description, value.filename)
+            return new SavedLogin(value.id, value.name, value.description, value.filename)
         }
     )
 }
-const configString: string = fs.readFileSync(configPath, {encoding: "UTF-8"})
+const configString: string =
+    fs.existsSync(configPath) ? fs.readFileSync(configPath, {encoding: "UTF-8"}) : undefined
 if (configString) {
     config = JSON.parse(
         configString.toString()
@@ -120,6 +127,9 @@ ipcMain.on('synchronous-message', (event, args) => {
         case "get-logins":
             returnLogins(event)
             break;
+        case "save-new-login":
+            saveNewLogin(args[1], args[2], event)
+            break;
     }
 })
 ipcMain.on("asynchronous-message", (event, args) => {
@@ -129,9 +139,12 @@ ipcMain.on("asynchronous-message", (event, args) => {
     switch (command) {
         case "launch":
             const loginToUse = savedLogins.find((v, _, __) => {
-                return v.name === args[1]
+                return v.id === args[1]
             })
             useSavedLogin(loginToUse)
+            break;
+        case "launch-current":
+            lauch();
             break;
     }
 })
@@ -150,32 +163,43 @@ function checkAsteriosPath(event: IpcMainEvent) {
 
 function saveConfig() {
     config.asteriosPath = asteriosPath;
-    fs.writeFileSync(configPath, JSON.stringify(config));
+    fs.writeFileSync(configPath, JSON.stringify(config, null, "  "));
 }
 
-const targetIniName = path.resolve(asteriosPath, "asterios", "AsteriosGame.ini")
-const launcherPath = path.resolve(asteriosPath, "Asterios.exe")
+const targetIniName = () => path.resolve(asteriosPath, "asterios", "AsteriosGame.ini")
+const launcherPath = () => path.resolve(asteriosPath, "Asterios.exe")
 
 function useSavedLogin(savedLogin: SavedLogin) {
-    if (savedLogin) fs.copyFileSync(resolveLoginPath(savedLogin.filename), targetIniName)
+    if (savedLogin) fs.copyFileSync(resolveLoginPath(savedLogin.filename), targetIniName())
     console.log("used", savedLogin.name)
-    child.execFile(launcherPath, ["/autoplay"])
+    lauch();
+}
+function lauch(){
+    console.log("executing", launcherPath())
+    child.execFile(launcherPath(), ["/autoplay"])
 }
 
-function saveNewLogin(name: string, description: string) {
-    const newLogin = new SavedLogin(name, description, name + ".ini")
-    fs.copyFileSync(targetIniName, resolveLoginPath(newLogin.filename))
+function saveNewLogin(name: string, description: string, event: IpcMainEvent) {
+    const randomId = uuidv4() as string
+    const newLogin = new SavedLogin(randomId, name, description, randomId + ".ini")
+    fs.copyFileSync(targetIniName(), resolveLoginPath(newLogin.filename))
     console.log("saved", newLogin)
     savedLogins.push(newLogin)
-    fs.writeFileSync(savedLoginsPath, JSON.stringify(savedLogins))
+    fs.writeFileSync(savedLoginsPath, JSON.stringify(savedLogins, null, "  "))
+    const saved = fs.existsSync(resolveLoginPath(newLogin.filename))
+    console.log("saved", saved)
+    event.returnValue = saved
 }
 
 function resolveLoginPath(loginFilename: string): string {
+    const loginsDir = path.resolve(asteriosPath, "asterios", "logins")
+    if (!fs.existsSync(loginsDir))
+        fs.mkdirSync(loginsDir)
     return path.resolve(asteriosPath, "asterios", "logins", loginFilename);
 }
 
 function returnLogins(event: IpcMainEvent) {
     if (savedLogins.length === 0)
         event.returnValue = ["none"]
-    else event.returnValue = ["logins", JSON.stringify(savedLogins)]
+    else event.returnValue = ["logins", JSON.stringify(savedLogins, null, "  ")]
 }
