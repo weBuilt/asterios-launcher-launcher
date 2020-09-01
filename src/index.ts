@@ -16,6 +16,11 @@ const allContent = document.getElementById("dependent-content") as HTMLDivElemen
 const launchCurrent = document.getElementById("launch-current-button")
 const deleteCurrent = document.getElementById("delete-current-button")
 const selectLoginGroupName = "select-login-button"
+const version = document.getElementById("app-version")
+const closeNotificationButton = document.getElementById("close-button")
+const restartButton = document.getElementById("restart-button")
+const notification = document.getElementById('notification')
+const message = document.getElementById('message')
 
 allContent.style.display = "none"
 
@@ -61,6 +66,11 @@ ipcRenderer.on('selected-directory', (event, path) => {
 })
 refreshAsteriosPath();
 refreshLogins();
+ipcRenderer.send('app_version');
+ipcRenderer.on('app_version', (event, arg) => {
+    ipcRenderer.removeAllListeners('app_version');
+    version.innerText = "Version " + arg.version
+})
 
 function refreshAsteriosPath() {
     const response = ipcRenderer.sendSync('synchronous-message', ["asterios-path-specified"])
@@ -111,3 +121,24 @@ function refreshLogins() {
             )
     }
 }
+
+
+function closeNotification() {
+    notification.classList.add('hidden');
+}
+closeNotificationButton.addEventListener("click", closeNotification)
+function restartApp() {
+    ipcRenderer.send('restart_app');
+}
+restartButton.addEventListener("click", restartApp)
+ipcRenderer.on('update_available', () => {
+    ipcRenderer.removeAllListeners('update_available');
+    message.innerText = 'A new update is available. Downloading now...';
+    notification.classList.remove('hidden');
+});
+ipcRenderer.on('update_downloaded', () => {
+    ipcRenderer.removeAllListeners('update_downloaded');
+    message.innerText = 'Update Downloaded. It will be installed on restart. Restart now?';
+    restartButton.classList.remove('hidden');
+    notification.classList.remove('hidden');
+});

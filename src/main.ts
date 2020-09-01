@@ -1,6 +1,7 @@
 import {app, BrowserWindow, ipcMain, dialog, IpcMainEvent} from "electron";
 
 const child = require('child_process');
+const {autoUpdater} = require('electron-updater');
 import * as path from "path";
 // import os from "os";
 import fs from "fs";
@@ -63,9 +64,10 @@ let mainWindowId: number;
 let asteriosPath: string;
 if (config.asteriosPath) asteriosPath = config.asteriosPath as string;
 
+let mainWindow: BrowserWindow;
 function createWindow() {
     // Create the browser window.
-    const mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         height: 600,
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),
@@ -83,9 +85,17 @@ function createWindow() {
     // and load the index.html of the app.
     mainWindow.loadFile(path.join(__dirname, "../index.html"));
 
+    mainWindow.once('ready-to-show', () => {
+        autoUpdater.checkForUpdatesAndNotify();
+    });
+
     // Open the DevTools.
     if (isDev) mainWindow.webContents.openDevTools();
 }
+
+ipcMain.on('app_version', (event) => {
+    event.sender.send('app_version', {version: app.getVersion()});
+})
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -244,3 +254,13 @@ function returnLogins(event: IpcMainEvent) {
         event.returnValue = ["none"]
     else event.returnValue = ["logins", JSON.stringify(savedLogins, null, "  ")]
 }
+
+autoUpdater.on('update-available', () => {
+    mainWindow.webContents.send('update_available');
+});
+autoUpdater.on('update-downloaded', () => {
+    mainWindow.webContents.send('update_downloaded');
+});
+ipcMain.on('restart_app', () => {
+    autoUpdater.quitAndInstall();
+});
