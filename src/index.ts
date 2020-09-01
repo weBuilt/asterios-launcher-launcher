@@ -14,6 +14,9 @@ const addLoginName= document.getElementById("add-login-name") as HTMLInputElemen
 const addLoginDescription = document.getElementById("add-login-description") as HTMLInputElement
 const allContent = document.getElementById("dependent-content") as HTMLDivElement
 const launchCurrent = document.getElementById("launch-current-button")
+const deleteCurrent = document.getElementById("delete-current-button")
+const selectLoginGroupName = "select-login-button"
+
 allContent.style.display = "none"
 
 addLoginButton.addEventListener("click", (_) => {
@@ -22,6 +25,11 @@ addLoginButton.addEventListener("click", (_) => {
 })
 launchCurrent.addEventListener("click", (_) => {
     ipcRenderer.send('asynchronous-message', ["launch-current"])
+})
+deleteCurrent.addEventListener("click", (_) => {
+    const reply = ipcRenderer.sendSync('synchronous-message', ["delete"]) as string
+    const rowToDelete = document.getElementById(reply)
+    rowToDelete.parentNode.removeChild(rowToDelete);
 })
 
 addLoginForm.addEventListener("submit", (event) => {
@@ -80,19 +88,24 @@ function refreshLogins() {
             if (parsed instanceof Array) parsed.map(
                 (login, idx, _) => {
                     const child = document.createElement("tr")
-                    child.id = "login-" + idx
+                    child.id = login.id
                     const childName = document.createElement("td")
                     childName.textContent = login.name
                     const childDescription = document.createElement("td")
                     childDescription.textContent = login.description
-                    const childFilename = document.createElement("td")
-                    childFilename.textContent = login.filename
+                    const childRadioButton: HTMLInputElement = document.createElement("input")
+                    childRadioButton.type = "radio"
+                    childRadioButton.name = selectLoginGroupName
+                    childRadioButton.addEventListener("click", () => {
+                        ipcRenderer.send("asynchronous-message", ["set", login.id])
+                    })
                     child.addEventListener("dblclick", () => {
                         ipcRenderer.send("asynchronous-message", ["launch", login.id])
+                        childRadioButton.checked = true;
                     })
+                    child.appendChild(childRadioButton)
                     child.appendChild(childName)
                     child.appendChild(childDescription)
-                    child.appendChild(childFilename)
                     if (loginsBody) loginsBody.appendChild(child)
                 }
             )

@@ -7,6 +7,9 @@ import fs from "fs";
 
 const {v4: uuidv4} = require('uuid');
 
+let selected: string | null
+let lastUsed: string | null
+
 const isDev = !(process.env.NODE_ENV === undefined) && (process.env.NODE_ENV.indexOf("dev") !== -1)
 
 const configPath = path.resolve(__dirname, "..", "config.json");
@@ -69,6 +72,11 @@ function createWindow() {
             nodeIntegration: true,
         },
         width: 800,
+        autoHideMenuBar: (!isDev),
+        maximizable: false,
+        fullscreenable: false,
+        thickFrame: true,
+        icon: path.join(__dirname, "../icon.png")
     });
     mainWindowId = mainWindow.id;
 
@@ -130,6 +138,9 @@ ipcMain.on('synchronous-message', (event, args) => {
         case "save-new-login":
             saveNewLogin(args[1], args[2], event)
             break;
+        case "delete":
+            deleteLogin(selected, event);
+            break;
     }
 })
 ipcMain.on("asynchronous-message", (event, args) => {
@@ -138,20 +149,39 @@ ipcMain.on("asynchronous-message", (event, args) => {
     console.log("async command", command)
     switch (command) {
         case "launch":
-            const loginToUse = savedLogins.find((v, _, __) => {
-                return v.id === args[1]
-            })
-            useSavedLogin(loginToUse)
+            useSavedLogin(args[1])
             break;
         case "launch-current":
-            lauch();
+            launch();
+            break;
+        case "set":
+            setSelected(args[1]);
             break;
     }
 })
 
+function findLogin(id: string): SavedLogin | null {
+    return savedLogins.find((v, _, __) => {
+        return (v.id === id)
+    })
+}
+
+function deleteLogin(id: string, event: IpcMainEvent) {
+    savedLogins = savedLogins.filter((l) => {
+        return l.id !== id
+    })
+    rewriteLogins();
+    if (event) event.returnValue = id;
+}
+
 function isAsteriosPathCorrect(astPath: string): boolean {
     const stat = fs.statSync(astPath)
     return stat.isDirectory() && fs.existsSync(path.resolve(astPath, "asterios"))
+}
+
+function setSelected(id: string) {
+    selected = id;
+    console.log("selected", selected);
 }
 
 function checkAsteriosPath(event: IpcMainEvent) {
@@ -170,13 +200,24 @@ const targetIniName = () => path.resolve(asteriosPath, "asterios", "AsteriosGame
 const launcherPath = () => path.resolve(asteriosPath, "Asterios.exe")
 
 function useSavedLogin(savedLogin: SavedLogin) {
-    if (savedLogin) fs.copyFileSync(resolveLoginPath(savedLogin.filename), targetIniName())
+    selected = savedLogin.id
     console.log("used", savedLogin.name)
-    lauch();
+    launch();
 }
-function lauch(){
+
+function launch() {
+    if (selected && (lastUsed !== selected)) {
+        const login = findLogin(selected)
+        if (login)
+            fs.copyFileSync(resolveLoginPath(login.filename), targetIniName())
+    }
+    lastUsed = selected;
     console.log("executing", launcherPath())
     child.execFile(launcherPath(), ["/autoplay"])
+}
+
+function rewriteLogins() {
+    fs.writeFileSync(savedLoginsPath, JSON.stringify(savedLogins, null, "  "))
 }
 
 function saveNewLogin(name: string, description: string, event: IpcMainEvent) {
@@ -185,7 +226,7 @@ function saveNewLogin(name: string, description: string, event: IpcMainEvent) {
     fs.copyFileSync(targetIniName(), resolveLoginPath(newLogin.filename))
     console.log("saved", newLogin)
     savedLogins.push(newLogin)
-    fs.writeFileSync(savedLoginsPath, JSON.stringify(savedLogins, null, "  "))
+    rewriteLogins()
     const saved = fs.existsSync(resolveLoginPath(newLogin.filename))
     console.log("saved", saved)
     event.returnValue = saved

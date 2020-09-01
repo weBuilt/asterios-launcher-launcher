@@ -7,7 +7,7 @@
     "watch": "tsc -w",
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "start": "set NODE_ENV=dev && npm run build && electron ./dist/main.js",
-    "build-win": "electron-packager . --out ../asterios-launcher-compiled --executable-name \"Asterios Launcher Launcher\" --win32metadata.requested-execution-level=\"requireAdministrator\"",
+    "build-win": "electron-packager . --out ../asterios-launcher-compiled --executable-name \"Asterios Launcher Launcher\" --win32metadata.requested-execution-level=\"requireAdministrator\" --icon=./icon.ico",
     "build-win-installer": "electron-installer-windows --src ../asterios-launcher-compiled/asterios-launcher-launcher-win32-x64/ --dest ../asterios-launcher-compiled/asterios-launcher-launcher-installer/ --options.exe=\"Asterios Launcher Launcher.exe\""
   },
   "main": "./dist/main.js",
