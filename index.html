@@ -43,17 +43,19 @@
         <br/>
     </div>
     <!-- You can also require other files to run in this process -->
-    <p id="app-version"></p>
-    <div id="notification" class="hidden">
-        <p id="message"></p>
-        <button id="close-button">
-            Close
-        </button>
-        <button id="restart-button" class="hidden">
-            Restart
-        </button>
+    <div class="version-bar">
+        <p id="app-version"></p>
+        <div id="notification" class="hidden">
+            <p id="message"></p>
+            <button id="close-button">
+                Close
+            </button>
+            <button id="restart-button" class="hidden">
+                Restart
+            </button>
+        </div>
+        <script src="./dist/index.js"></script>
     </div>
-    <script src="./dist/index.js"></script>
 </div>
 </body>
 </html>

@@ -16,3 +16,8 @@
 .hidden {
     display: none;
 }
+.version-bar{
+    position: fixed;
+    bottom: 0;
+    left: 15px;
+}
