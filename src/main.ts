@@ -266,11 +266,14 @@ function returnLogins(event: IpcMainEvent) {
 }
 
 autoUpdater.on('update-available', () => {
+    console.log("update available")
     mainWindow.webContents.send('update_available');
 });
 autoUpdater.on('update-downloaded', () => {
+    console.log("update downloaded")
     mainWindow.webContents.send('update_downloaded');
 });
 ipcMain.on('restart_app', () => {
-    autoUpdater.quitAndInstall();
+    console.log("restarting with update")
+    autoUpdater.quitAndInstall(false, true);
 });
