@@ -15,14 +15,21 @@ const addLoginDescription = document.getElementById("add-login-description") as 
 const allContent = document.getElementById("dependent-content") as HTMLDivElement
 const launchCurrent = document.getElementById("launch-current-button")
 const deleteCurrent = document.getElementById("delete-current-button")
+const updateCurrent = document.getElementById("update-current-button")
 const selectLoginGroupName = "select-login-button"
 const version = document.getElementById("app-version")
 const closeNotificationButton = document.getElementById("close-button")
 const restartButton = document.getElementById("restart-button")
 const notification = document.getElementById('notification')
 const message = document.getElementById('message')
+const closeForm = document.getElementById("submit-form")
 
 allContent.style.display = "none"
+
+closeForm.addEventListener("click", () => {
+    addLoginButton.hidden = false;
+    addLoginForm.hidden = true;
+})
 
 addLoginButton.addEventListener("click", (_) => {
     addLoginButton.hidden = true;
@@ -35,6 +42,9 @@ deleteCurrent.addEventListener("click", (_) => {
     const reply = ipcRenderer.sendSync('synchronous-message', ["delete"]) as string
     const rowToDelete = document.getElementById(reply)
     rowToDelete.parentNode.removeChild(rowToDelete);
+})
+updateCurrent.addEventListener("click", (_) => {
+    ipcRenderer.send('asynchronous-message', ["update"]);
 })
 
 addLoginForm.addEventListener("submit", (event) => {

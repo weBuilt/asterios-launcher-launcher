@@ -9,8 +9,12 @@
       "output": "../asterios-launcher-compiled"
     },
     "win": {
-      "target": "msi",
-      "icon": "./icon.ico"
+      "target": "nsis",
+      "icon": "./icon.ico",
+      "requestedExecutionLevel": "requireAdministrator"
+    },
+    "nsis": {
+      "installerIcon": "./icon.ico"
     }
   },
   "scripts": {

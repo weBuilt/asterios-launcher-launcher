@@ -170,6 +170,9 @@ ipcMain.on("asynchronous-message", (event, args) => {
         case "set":
             setSelected(args[1]);
             break;
+        case "update":
+            update();
+            break;
     }
 })
 
@@ -220,12 +223,17 @@ function useSavedLogin(savedLoginId: string) {
 function launch() {
     if (selected && (lastUsed !== selected)) {
         const login = findLogin(selected)
-        if (login)
+        if (login) {
+            console.log("rewriting login")
             fs.copyFileSync(resolveLoginPath(login.filename), targetIniName())
+        }
     }
     lastUsed = selected;
     console.log("executing", launcherPath())
     child.execFile(launcherPath(), ["/autoplay"])
+}
+function update() {
+    fs.copyFileSync(targetIniName(), resolveLoginPath(findLogin(selected).filename))
 }
 
 function rewriteLogins() {
