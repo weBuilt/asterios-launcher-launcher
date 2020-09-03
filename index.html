@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <title>Asterios Launcher</title>
+    <link rel="stylesheet" href="./stylesheet.css">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta
             http-equiv="Content-Security-Policy"
@@ -10,61 +11,49 @@
     />
 </head>
 <body>
-
-Asterios folder is <span id="asterios-path">not specified</span>.
-<button id="select-asterios-path">Specify path</button>
-<div id="dependent-content">
-    <button id="add-login-button">Create</button>
-    <button id="launch-current-button">Launch</button>
-    <button id="update-current-button">Update</button>
-    <button id="delete-current-button">Delete</button>
-    <table id="logins-table">
-        <thead>
-        <th></th>
-        <th>Name</th>
-        <th>Description</th>
-        </thead>
-        <tbody id="logins-table-body">
-        </tbody>
-    </table>
-    <form id="new-login-form" hidden action="#">
-        <label for="add-login-name">New Login Name</label>
-        <input id="add-login-name" type="text"/>
+<div class="all">
+    Asterios folder is <span id="asterios-path">not specified</span>.
+    <button id="select-asterios-path">Specify path</button>
+    <br>
+    <img id="devka" class="devka" alt="" style="display: block;">
+    <div id="dependent-content">
+        <button id="add-login-button">Create</button>
+        <button id="launch-current-button">Launch</button>
+        <button id="update-current-button">Update</button>
+        <button id="delete-current-button">Delete</button>
+        <table id="logins-table">
+            <thead>
+            <th></th>
+            <th>Name</th>
+            <th>Description</th>
+            </thead>
+            <tbody id="logins-table-body">
+            </tbody>
+        </table>
+        <form id="new-login-form" hidden action="#">
+            <label for="add-login-name">New Login Name</label>
+            <input id="add-login-name" type="text"/>
+            <br/>
+            <label for="add-login-description">New Login Description</label>
+            <input id="add-login-description" type="text"/>
+            <br/>
+            <input type="submit" id="submit-form" value="Save"/>
+            <button id="close-form">Close</button>
+        </form>
         <br/>
-        <label for="add-login-description">New Login Description</label>
-        <input id="add-login-description" type="text"/>
-        <br/>
-        <input type="submit" id="submit-form" value="Save"/>
-        <button id="close-form">Close</button>
-    </form>
-    <br/>
+    </div>
+    <!-- You can also require other files to run in this process -->
+    <p id="app-version"></p>
+    <div id="notification" class="hidden">
+        <p id="message"></p>
+        <button id="close-button">
+            Close
+        </button>
+        <button id="restart-button" class="hidden">
+            Restart
+        </button>
+    </div>
+    <script src="./dist/index.js"></script>
 </div>
-<!-- You can also require other files to run in this process -->
-<style>
-    #notification {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        width: 200px;
-        padding: 20px;
-        border-radius: 5px;
-        background-color: white;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    }
-    .hidden {
-        display: none;
-    }
-</style>
-<p id="app-version"></p>
-<div id="notification" class="hidden">
-    <p id="message"></p>
-    <button id="close-button">
-        Close
-    </button>
-    <button id="restart-button" class="hidden">
-        Restart
-    </button>
-</div>
-<script src="./dist/index.js"></script>
 </body>
 </html>

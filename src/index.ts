@@ -23,6 +23,7 @@ const restartButton = document.getElementById("restart-button")
 const notification = document.getElementById('notification')
 const message = document.getElementById('message')
 const closeForm = document.getElementById("submit-form")
+const devka = document.getElementById("devka") as HTMLImageElement
 
 allContent.style.display = "none"
 
@@ -152,3 +153,5 @@ ipcRenderer.on('update_downloaded', () => {
     restartButton.classList.remove('hidden');
     notification.classList.remove('hidden');
 });
+const selectedDevka = ipcRenderer.sendSync('devka') as string;
+devka.src = selectedDevka

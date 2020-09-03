@@ -10,6 +10,7 @@ const {v4: uuidv4} = require('uuid');
 
 let selected: string | null
 let lastUsed: string | null
+const devkas = ["./devka.png", "./devka2.png", "./devka3.png", "./devka4.png"]
 
 const isDev = !(process.env.NODE_ENV === undefined) && (process.env.NODE_ENV.indexOf("dev") !== -1)
 const appDataPath = path.resolve(process.env.APPDATA, "aLauncher")
@@ -71,16 +72,15 @@ let mainWindow: BrowserWindow;
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        height: 600,
+        height: 480,
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),
             nodeIntegration: true,
         },
-        width: 800,
+        width: 600,
         autoHideMenuBar: (!isDev),
         maximizable: false,
         fullscreenable: false,
-        thickFrame: true,
         icon: path.join(__dirname, "../icon.png")
     });
     mainWindowId = mainWindow.id;
@@ -104,14 +104,20 @@ ipcMain.on('app_version', (event) => {
 // Some APIs can only be used after this event occurs.
 app.on("ready", () => {
     createWindow();
-
     app.on("activate", () => {
         // On macOS it's common to re-create a window in the app when the
         // dock icon is clicked and there are no other windows open.
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
     });
 });
-
+ipcMain.on(
+    'devka',
+    (event) => {
+        const idx = Math.floor(Math.random() * devkas.length)
+        console.log("selected", devkas[idx]);
+        event.returnValue = devkas[idx]
+    }
+)
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
