@@ -4,17 +4,9 @@
     <meta charset="UTF-8"/>
     <title>Asterios Launcher</title>
     <link rel="stylesheet" href="./stylesheet.css">
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta
-            http-equiv="Content-Security-Policy"
-            content="default-src 'self'; script-src 'self'"
-    />
 </head>
 <body>
 <div class="all">
-    Asterios folder is <span id="asterios-path">not specified</span>.
-    <button id="select-asterios-path">Specify path</button>
-    <br>
     <img id="devka" class="devka" alt="" style="display: block;">
     <div id="dependent-content">
         <button id="add-login-button">Create</button>
@@ -41,6 +33,13 @@
             <button id="close-form">Close</button>
         </form>
         <br/>
+    </div>
+    <div class="asterios-info">
+        <p>
+            Asterios folder is <span id="asterios-path">not specified</span>.
+        </p>
+        <button id="select-asterios-path">Specify path</button>
+        <br>
     </div>
     <!-- You can also require other files to run in this process -->
     <div class="version-bar">
