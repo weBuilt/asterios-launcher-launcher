@@ -18,21 +18,44 @@
 }
 .version-bar{
     position: fixed;
-    bottom: 0;
-    left: 15px;
+    bottom: -3%;
+    left: 80%;
 }
-td, th {
-    border: 1px solid black;
+td {
+    border: 2px solid #ffffff3f;
+    border-collapse: collapse;
+    padding: 2px;
+    align-content: center;
+}
+tr {
 }
 table {
     border-collapse: collapse;
+    color: white;
+    #font-weight: bold
 }
 tr:hover {
-    background-color: darkgray;
+    background-color: inherit;
 }
 th:first-child {
     border: none;
 }
 button {
     margin: 2px;
+    font-family: 'Segoe Print', sans-serif;
+    box-shadow: 2px 2px #00000036;
+    border: none;
+    border-radius: 10%;
+}
+body {
+
+    font-family: 'Segoe Print', sans-serif;
+
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(194,194,236,1) 0%, rgba(63,147,164,1) 100%);
+}
+.asterios-info {
+    position: fixed;
+    bottom: 3%;
+    left: 3%;
 }
