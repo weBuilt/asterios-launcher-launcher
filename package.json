@@ -1,7 +1,18 @@
 {
-  "name": "asterios-launcher-launcher",
-  "version": "0.0.1",
+  "name": "asterios-launcher",
+  "version": "0.1.0",
   "description": "Simple autologin management tool for asterios",
+  "build": {
+    "appId": "com.github.weBuilt.asterios-launcher-launcher",
+    "productName": "Asterios Launcher",
+    "directories": {
+      "output": "../asterios-launcher-compiled"
+    },
+    "win": {
+      "target": "msi",
+      "icon": "./icon.ico"
+    }
+  },
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
@@ -15,7 +26,7 @@
   "main": "./dist/main.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/weBuilt/asterios-launcher-launcher"
+    "url": "https://github.com/weBuilt/asterios-launcher-launcher.git"
   },
   "keywords": [
     "Electron",

@@ -2,35 +2,21 @@
 <html lang="en-us">
 <head>
     <meta charset="UTF-8"/>
-    <title>Asterios Launcher Launcher</title>
+    <title>Asterios Launcher</title>
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta
             http-equiv="Content-Security-Policy"
             content="default-src 'self'; script-src 'self'"
     />
-    <style>
-        #notification {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 200px;
-            padding: 20px;
-            border-radius: 5px;
-            background-color: white;
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-        }
-        .hidden {
-            display: none;
-        }
-    </style>
 </head>
 <body>
 
 Asterios folder is <span id="asterios-path">not specified</span>.
 <button id="select-asterios-path">Specify path</button>
 <div id="dependent-content">
-    <button id="add-login-button">Add new Login</button>
+    <button id="add-login-button">Create</button>
     <button id="launch-current-button">Launch</button>
+    <button id="update-current-button">Update</button>
     <button id="delete-current-button">Delete</button>
     <table id="logins-table">
         <thead>
@@ -54,12 +40,12 @@ Asterios folder is <span id="asterios-path">not specified</span>.
 </div>
 <!-- You can also require other files to run in this process -->
 <p id="app-version"></p>
-<div id="notification" class="hidden">
+<div id="notification" hidden>
     <p id="message"></p>
     <button id="close-button">
         Close
     </button>
-    <button id="restart-button" class="hidden">
+    <button id="restart-button" hidden>
         Restart
     </button>
 </div>

@@ -3,8 +3,8 @@ import {app, BrowserWindow, ipcMain, dialog, IpcMainEvent} from "electron";
 const child = require('child_process');
 const {autoUpdater} = require('electron-updater');
 import * as path from "path";
-// import os from "os";
 import fs from "fs";
+// import os from "os";
 
 const {v4: uuidv4} = require('uuid');
 
@@ -12,8 +12,10 @@ let selected: string | null
 let lastUsed: string | null
 
 const isDev = !(process.env.NODE_ENV === undefined) && (process.env.NODE_ENV.indexOf("dev") !== -1)
+const appDataPath = path.resolve(process.env.APPDATA, "aLauncher")
+if (!fs.existsSync(appDataPath)) fs.mkdirSync(appDataPath)
 
-const configPath = path.resolve(__dirname, "..", "config.json");
+const configPath = path.resolve(appDataPath, "config.json");
 let config = {
     asteriosPath: undefined as string,
 };
@@ -37,7 +39,7 @@ class SavedLogin {
     }
 }
 
-const savedLoginsPath = path.resolve(__dirname, "..", "logins.json");
+const savedLoginsPath = path.resolve(appDataPath, "logins.json");
 const savedLoginsString =
     fs.existsSync(savedLoginsPath) ? fs.readFileSync(savedLoginsPath, {encoding: "UTF-8"}) : undefined
 let savedLogins: SavedLogin[] = [];
@@ -65,6 +67,7 @@ let asteriosPath: string;
 if (config.asteriosPath) asteriosPath = config.asteriosPath as string;
 
 let mainWindow: BrowserWindow;
+
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
@@ -159,7 +162,7 @@ ipcMain.on("asynchronous-message", (event, args) => {
     console.log("async command", command)
     switch (command) {
         case "launch":
-            useSavedLogin(args[1])
+            useSavedLogin(args[1]);
             break;
         case "launch-current":
             launch();
@@ -209,9 +212,8 @@ function saveConfig() {
 const targetIniName = () => path.resolve(asteriosPath, "asterios", "AsteriosGame.ini")
 const launcherPath = () => path.resolve(asteriosPath, "Asterios.exe")
 
-function useSavedLogin(savedLogin: SavedLogin) {
-    selected = savedLogin.id
-    console.log("used", savedLogin.name)
+function useSavedLogin(savedLoginId: string) {
+    selected = savedLoginId;
     launch();
 }
 
