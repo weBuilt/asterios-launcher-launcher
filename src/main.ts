@@ -1,6 +1,7 @@
 import {app, BrowserWindow, ipcMain, dialog, IpcMainEvent} from "electron";
 
 const child = require('child_process');
+const taskkill = require('taskkill');
 const {autoUpdater} = require('electron-updater');
 import * as path from "path";
 import fs from "fs";
@@ -72,7 +73,7 @@ let mainWindow: BrowserWindow;
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        height: 530,
+        height: 800,
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),
             nodeIntegration: true,
@@ -178,8 +179,29 @@ ipcMain.on("asynchronous-message", (event, args) => {
         case "update":
             update();
             break;
+        case "kill-all":
+            killAll();
+            break;
     }
 })
+
+function killAll() {
+    /*    // @ts-ignore
+        exec('./taskkill.bat', (err, stdout, stderr) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            console.log(stdout);
+        })*/
+    // child.execSync('taskkill', ['/F', '/IM', 'AsteriosGame.exe'])
+    console.log("killing asterios");
+
+    taskkill(['AsteriosGame.exe', 'Asterios.exe', 'awesomiumprocess.exe'], {
+        force: true,
+        tree: true,
+    });
+}
 
 function findLogin(id: string): SavedLogin | null {
     return savedLogins.find((v, _, __) => {
@@ -237,6 +259,7 @@ function launch() {
     console.log("executing", launcherPath())
     child.execFile(launcherPath(), ["/autoplay"])
 }
+
 function update() {
     fs.copyFileSync(targetIniName(), resolveLoginPath(findLogin(selected).filename))
 }

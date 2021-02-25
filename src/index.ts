@@ -7,6 +7,7 @@
 const {ipcRenderer} = require('electron')
 
 const selectDirBtn = document.getElementById("select-asterios-path")
+const killAllBtn = document.getElementById("kill-all-button")
 const loginsBody = document.getElementById("logins-table-body")
 const addLoginButton = document.getElementById("add-login-button")
 const addLoginForm = document.getElementById("new-login-form")
@@ -26,6 +27,10 @@ const closeForm = document.getElementById("submit-form")
 const devka = document.getElementById("devka") as HTMLImageElement
 
 allContent.style.display = "none"
+
+killAllBtn.addEventListener("click", (_) => {
+    ipcRenderer.send('asynchronous-message', ["kill-all"])
+})
 
 closeForm.addEventListener("click", () => {
     addLoginButton.hidden = false;

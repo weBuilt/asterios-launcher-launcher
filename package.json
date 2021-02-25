@@ -1,6 +1,6 @@
 {
   "name": "asterios-launcher",
-  "version": "0.9.1",
+  "version": "0.9.3",
   "description": "Simple autologin management tool for asterios",
   "build": {
     "appId": "com.github.weBuilt.asterios-launcher-launcher",
@@ -55,6 +55,7 @@
   },
   "dependencies": {
     "electron-updater": "^4.3.4",
+    "taskkill": "^3.1.0",
     "update-electron-app": "^1.5.0",
     "uuid": "^8.3.0"
   }
