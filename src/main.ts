@@ -301,6 +301,7 @@ function swapElements(id: string, event: IpcMainEvent) {
         return login.id === id;
     })
     if (idx >= 1) [savedLogins[idx], savedLogins[idx - 1]] = [savedLogins[idx - 1], savedLogins[idx]]
+    rewriteLogins();
     returnLogins(event);
 }
 
