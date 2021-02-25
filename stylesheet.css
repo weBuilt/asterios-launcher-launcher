@@ -21,6 +21,11 @@
     bottom: -3%;
     left: 80%;
 }
+.kill-all-button {
+    position: fixed;
+    bottom: 3%;
+    left: 87%;
+}
 td {
     border: 2px solid #ffffff3f;
     border-collapse: collapse;

@@ -101,6 +101,45 @@ function refreshAsteriosPath() {
             break;
     }
 }
+function moveUp(id: string){
+    const response = ipcRenderer.sendSync('synchronous-message', ["swap", id]);
+    loginsBody.innerHTML = "";
+    redrawLogins(response[1]);
+}
+
+function redrawLogins(response: string) {
+    const parsed = JSON.parse(response);
+    if (parsed instanceof Array) parsed.map(
+        (login, idx, _) => {
+            const child = document.createElement("tr")
+            child.id = login.id
+            const childName = document.createElement("td")
+            childName.textContent = login.name
+            const childDescription = document.createElement("td")
+            childDescription.textContent = login.description
+            const childRadioButton: HTMLInputElement = document.createElement("input")
+            childRadioButton.type = "radio"
+            childRadioButton.name = selectLoginGroupName
+            childRadioButton.addEventListener("click", () => {
+                ipcRenderer.send("asynchronous-message", ["set", login.id])
+            })
+            child.addEventListener("dblclick", () => {
+                ipcRenderer.send("asynchronous-message", ["launch", login.id])
+                childRadioButton.checked = true;
+            })
+            const moveUpButton = document.createElement("button")
+            moveUpButton.innerText = "^"
+            moveUpButton.addEventListener("click", () => {
+                moveUp(login.id);
+            })
+            child.appendChild(childRadioButton)
+            child.appendChild(childName)
+            child.appendChild(childDescription)
+            child.appendChild(moveUpButton)
+            if (loginsBody) loginsBody.appendChild(child)
+        }
+    )
+}
 
 function refreshLogins() {
     const response = ipcRenderer.sendSync('synchronous-message', ["get-logins"]);
@@ -110,31 +149,8 @@ function refreshLogins() {
         case "none":
             break;
         case "logins":
-            const parsed = JSON.parse(response[1]);
-            if (parsed instanceof Array) parsed.map(
-                (login, idx, _) => {
-                    const child = document.createElement("tr")
-                    child.id = login.id
-                    const childName = document.createElement("td")
-                    childName.textContent = login.name
-                    const childDescription = document.createElement("td")
-                    childDescription.textContent = login.description
-                    const childRadioButton: HTMLInputElement = document.createElement("input")
-                    childRadioButton.type = "radio"
-                    childRadioButton.name = selectLoginGroupName
-                    childRadioButton.addEventListener("click", () => {
-                        ipcRenderer.send("asynchronous-message", ["set", login.id])
-                    })
-                    child.addEventListener("dblclick", () => {
-                        ipcRenderer.send("asynchronous-message", ["launch", login.id])
-                        childRadioButton.checked = true;
-                    })
-                    child.appendChild(childRadioButton)
-                    child.appendChild(childName)
-                    child.appendChild(childDescription)
-                    if (loginsBody) loginsBody.appendChild(child)
-                }
-            )
+            redrawLogins(response[1]);
+            break;
     }
 }
 

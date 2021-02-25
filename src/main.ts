@@ -160,6 +160,9 @@ ipcMain.on('synchronous-message', (event, args) => {
         case "delete":
             deleteLogin(selected, event);
             break;
+        case "swap":
+            swapElements(args[1] as string, event);
+            break;
     }
 })
 ipcMain.on("asynchronous-message", (event, args) => {
@@ -291,6 +294,14 @@ function returnLogins(event: IpcMainEvent) {
     if (savedLogins.length === 0)
         event.returnValue = ["none"]
     else event.returnValue = ["logins", JSON.stringify(savedLogins, null, "  ")]
+}
+
+function swapElements(id: string, event: IpcMainEvent) {
+    const idx = savedLogins.findIndex((login) => {
+        return login.id === id;
+    })
+    if (idx > 1) [savedLogins[idx], savedLogins[idx - 1]] = [savedLogins[idx - 1], savedLogins[idx]]
+    returnLogins(event);
 }
 
 autoUpdater.on('update-available', () => {
