@@ -1,6 +1,6 @@
 {
   "name": "asterios-launcher",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "Simple autologin management tool for asterios",
   "build": {
     "appId": "com.github.weBuilt.asterios-launcher-launcher",

@@ -300,7 +300,7 @@ function swapElements(id: string, event: IpcMainEvent) {
     const idx = savedLogins.findIndex((login) => {
         return login.id === id;
     })
-    if (idx > 1) [savedLogins[idx], savedLogins[idx - 1]] = [savedLogins[idx - 1], savedLogins[idx]]
+    if (idx >= 1) [savedLogins[idx], savedLogins[idx - 1]] = [savedLogins[idx - 1], savedLogins[idx]]
     returnLogins(event);
 }
 
