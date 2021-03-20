@@ -73,12 +73,12 @@ let mainWindow: BrowserWindow;
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        height: 800,
+        height: 860,
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),
             nodeIntegration: true,
         },
-        width: 600,
+        width: 740,
         autoHideMenuBar: (!isDev),
         maximizable: false,
         fullscreenable: false,
